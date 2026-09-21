@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>장자365 — 하루 한 줄 장자</title>
+<style>
+  :root{
+    --navy:#1c2a4a; --navy-d:#101a30; --gold:#c9a24b; --ink:#232323;
+    --bg:#f6f4ee; --card:#ffffff; --line:#e6e1d3; --muted:#7c7566;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",sans-serif;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy-d));color:#fff;padding:18px 16px 14px;
+    position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+  header h1{margin:0;font-size:20px;letter-spacing:.5px;}
+  header .sub{color:var(--gold);font-size:12px;margin-top:4px;}
+  nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:9;}
+  nav.tabs button{flex:1;padding:11px 4px;border:none;background:none;font-size:13.5px;color:var(--muted);
+    border-bottom:3px solid transparent;font-weight:600;}
+  nav.tabs button.active{color:var(--navy);border-bottom-color:var(--gold);}
+  main{max-width:640px;margin:0 auto;padding:14px 14px 40px;}
+
+  .daybar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
+  .daybar button{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:15px;}
+  .daybar button:disabled{opacity:.35;}
+  .daybar .picker{flex:1;text-align:center;font-size:14px;color:var(--muted);}
+  .daybar select,.daybar input{border:1px solid var(--line);border-radius:6px;padding:4px;font-size:13px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin-bottom:12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .chapname{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.3px;}
+  .title{font-size:19px;font-weight:800;color:var(--navy);margin:4px 0 12px;}
+  .label{font-size:11.5px;font-weight:700;color:#fff;background:var(--navy);display:inline-block;
+    padding:2px 8px;border-radius:5px;margin-bottom:6px;letter-spacing:.3px;}
+  .original{font-size:19px;line-height:1.9;font-family:"Noto Serif KR",serif;color:var(--ink);
+    background:#faf8f1;border-left:3px solid var(--gold);padding:12px 14px;border-radius:4px;margin-bottom:14px;}
+  .hanja{font-size:12.5px;color:var(--muted);line-height:1.9;margin-bottom:14px;word-break:keep-all;}
+  .block{margin-bottom:14px;}
+  .block p{margin:4px 0 0;line-height:1.75;font-size:14.5px;}
+  .modern{background:#f1f6f4;border-left:3px solid #4a7a63;padding:10px 12px;border-radius:4px;font-size:14px;
+    line-height:1.7;color:#294a3b;}
+
+  .prog{font-size:12px;color:var(--muted);text-align:center;margin:6px 0 16px;}
+  .barbg{background:var(--line);height:6px;border-radius:3px;overflow:hidden;margin:0 0 16px;}
+  .barfg{background:var(--gold);height:100%;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:18px;}
+  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top;}
+  th{color:var(--muted);font-weight:700;font-size:11.5px;}
+  .grouphead{background:var(--navy);color:#fff;font-weight:700;padding:6px 10px;border-radius:6px;margin:16px 0 6px;font-size:13px;}
+  .kw{color:var(--gold);font-size:11.5px;}
+  .rangebadge{font-size:11px;color:#fff;background:#8f8570;padding:1px 6px;border-radius:10px;white-space:nowrap;}
+  .rangebadge.done{background:#3d7a53;}
+
+  .concept-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;}
+  .concept-card h3{margin:0 0 6px;color:var(--navy);font-size:15.5px;}
+  .concept-card .en{color:var(--muted);font-size:12px;font-weight:400;}
+  .concept-card p{margin:4px 0;font-size:13.5px;line-height:1.65;}
+  footer{text-align:center;color:var(--muted);font-size:11.5px;padding:20px 0 30px;}
+
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#15171c;--card:#1e212a;--line:#2c303b;--ink:#e8e6df;--muted:#9a95886;}
+    .original{background:#242017;}
+    .modern{background:#182420;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>莊子365 · 장자365</h1>
+  <div class="sub">하루 한 줄, 장자 33편을 365일로 걷다</div>
+</header>
+
+<nav class="tabs">
+  <button id="tab-day" class="active" onclick="showTab('day')">오늘의 장자</button>
+  <button id="tab-toc" onclick="showTab('toc')">33편 목차</button>
+  <button id="tab-concept" onclick="showTab('concept')">핵심개념10</button>
+  <button id="tab-sync" onclick="showTab('sync')">동기화</button>
+</nav>
+
+<main>
+  <section id="view-day"></section>
+  <section id="view-toc" style="display:none"></section>
+  <section id="view-concept" style="display:none"></section>
+  <section id="view-sync" style="display:none">
+    <div class="card">
+      <div class="title" style="font-size:16px;">기기 간 진도 동기화</div>
+      <p style="font-size:13.5px;color:var(--muted);line-height:1.7;">PIN(4~8자리 숫자)을 정해서 저장하면, 다른 기기에서 같은 PIN으로 불러와 이어볼 수 있습니다.</p>
+      <input id="pinInput" type="text" inputmode="numeric" placeholder="PIN 입력 (예: 5930)"
+        style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;margin:10px 0;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="syncSave()" style="flex:1;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;">현재 진도 저장</button>
+        <button onclick="syncLoad()" style="flex:1;background:var(--gold);color:#1c1c1c;border:none;border-radius:8px;padding:11px;font-size:14px;">저장된 진도 불러오기</button>
+      </div>
+      <div id="syncMsg" style="margin-top:10px;font-size:13px;color:var(--muted);"></div>
+    </div>
+  </section>
+</main>
+
+<footer>월송앤컴퍼니 · 파인트리 패밀리오피스 &nbsp;|&nbsp; 원문 출처: 莊子(장자) 內篇·外篇·雜篇</footer>
+
+<script src="data.js"></script>
+<script>
+const TOTAL_DAYS = 365;
+let curDay = (function(){
+  const saved = parseInt(localStorage.getItem('zz365_day')||'1',10);
+  return (saved>=1 && saved<=TOTAL_DAYS) ? saved : 1;
+})();
+
+function findChapterForDay(d){
+  return CURRICULUM.find(c => d>=c.dayRange[0] && d<=c.dayRange[1]) || CURRICULUM[CURRICULUM.length-1];
+}
+function findDayData(d){ return DAYS.find(x=>x.day===d); }
+
+function renderDay(){
+  const d = curDay;
+  const chap = findChapterForDay(d);
+  const data = findDayData(d);
+  localStorage.setItem('zz365_day', d);
+  const lastDone = DAYS.length ? DAYS[DAYS.length-1].day : 0;
+
+  let html = `
+    <div class="daybar">
+      <button onclick="changeDay(-1)" ${d<=1?'disabled':''}>‹ 이전</button>
+      <div class="picker">
+        <select onchange="jumpDay(this.value)">
+          ${Array.from({length:TOTAL_DAYS},(_,i)=>i+1).map(n=>`<option value="${n}" ${n===d?'selected':''}>${n}일차</option>`).join('')}
+        </select>
+      </div>
+      <button onclick="changeDay(1)" ${d>=TOTAL_DAYS?'disabled':''}>다음 ›</button>
+    </div>
+    <div class="prog">${d} / ${TOTAL_DAYS}일 · 현재까지 제작 완료: ${lastDone}일</div>
+    <div class="barbg"><div class="barfg" style="width:${(d/TOTAL_DAYS*100).toFixed(1)}%"></div></div>
+  `;
+
+  if(data){
+    html += `
+      <div class="card">
+        <div class="chapname">${chap.group} 제${chap.no}편 · ${chap.title}</div>
+        <div class="title">${data.title}</div>
+
+        <div class="label">원문</div>
+        <div class="original">${data.original}</div>
+
+        <div class="label">한자 음훈</div>
+        <div class="hanja">${data.hanja}</div>
+
+        <div class="block">
+          <div class="label">직역</div>
+          <p>${data.literal}</p>
+        </div>
+        <div class="block">
+          <div class="label">의역 · 풀이</div>
+          <p>${data.meaning}</p>
+        </div>
+        <div class="block">
+          <div class="label" style="background:#4a7a63;">현대적 적용</div>
+          <div class="modern">${data.modern}</div>
+        </div>
+      </div>`;
+  } else {
+    html += `
+      <div class="card" style="text-align:center;padding:34px 16px;">
+        <div class="chapname">${chap.group} 제${chap.no}편 · ${chap.title}</div>
+        <div style="margin:14px 0 6px;color:var(--muted);font-size:14px;">이 날짜는 아직 제작 예정입니다</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;">${chap.summary}<br>${chap.keywords.join(' ')}</div>
+        <div style="margin-top:14px;font-size:12px;color:var(--gold);">현재 1~${lastDone}일차(소요유편)까지 제작 완료 — 순차적으로 이어서 제작됩니다</div>
+      </div>`;
+  }
+  document.getElementById('view-day').innerHTML = html;
+}
+function changeDay(delta){ curDay = Math.min(TOTAL_DAYS, Math.max(1, curDay+delta)); renderDay(); }
+function jumpDay(v){ curDay = parseInt(v,10); renderDay(); }
+
+function renderToc(){
+  const lastDone = DAYS.length ? DAYS[DAYS.length-1].day : 0;
+  const groups = ["내편","외편","잡편"];
+  let html = '';
+  groups.forEach(g=>{
+    html += `<div class="grouphead">${g} — ${g==='내편'?'장자 본인 저작 핵심사상 7편':g==='외편'?'후학이 부연·확장한 15편':'다양한 후대 저작 모음 11편'}</div>`;
+    html += `<table><tr><th style="width:26px;">#</th><th>편명 · 요약</th><th style="width:64px;">일자</th></tr>`;
+    CURRICULUM.filter(c=>c.group===g).forEach(c=>{
+      const done = c.dayRange[0] <= lastDone;
+      html += `<tr onclick="curDay=${c.dayRange[0]};showTab('day');renderDay();" style="cursor:pointer;">
+        <td>${c.no}</td>
+        <td><b>${c.title}</b><br><span style="color:var(--muted)">${c.summary}</span><br><span class="kw">${c.keywords.join(' ')}</span></td>
+        <td><span class="rangebadge ${done?'done':''}">${c.dayRange[0]}–${c.dayRange[1]}일</span></td>
+      </tr>`;
+    });
+    html += `</table>`;
+  });
+  document.getElementById('view-toc').innerHTML = html;
+}
+
+const CONCEPTS = [
+  {kr:"소요유",en:"Free-and-Easy Wandering",def:"그 무엇에도 얽매이지 않고 자유롭게 노니는 절대 자유의 경지",ex:"붕새는 구만리를 날아야 하지만, 메추라기는 그것을 비웃는다 — 진짜 소요유는 그 기준 자체를 초월하는 것"},
+  {kr:"포정해우",en:"Cook Ding Cuts Up an Ox",def:"뼈와 살 사이 빈틈(理)을 따라 칼을 놀리듯, 억지로 힘쓰지 않고 사물의 결(道)을 따르면 힘들이지 않고도 일이 이루어진다",ex:"칼날은 두께가 없으나 뼈마디 사이는 틈이 있다 — 두께 없는 것으로 틈이 있는 곳에 들어가니 여유롭다"},
+  {kr:"소지·대지",en:"Small Knowledge vs Great Knowledge",def:"작은 지혜는 좁은 경험에 갇힌 앎, 큰 지혜는 그 경계를 넘어선 앎",ex:"아침에 나서 저녁에 죽는 버섯은 그믐과 초하루를 모르고, 여름벌레는 겨울을 모른다"},
+  {kr:"무대",en:"Non-dependence",def:"외부 조건(바람, 명예, 성공 등)에 의존하지 않는 상태",ex:"열자는 바람을 타고 다녔지만 여전히 '바람'에 의존했으므로 완전한 자유가 아니다"},
+  {kr:"무위자연",en:"Non-action, Following Nature",def:"억지로 하지 않고 자연스러운 흐름에 맡기는 삶의 태도",ex:"통치자가 백성을 억지로 다스리려 하지 않을 때 오히려 천하가 저절로 다스려진다"},
+  {kr:"무용지용",en:"The Usefulness of Uselessness",def:"쓸모없어 보이는 것이 오히려 온전한 삶을 지켜준다는 역설",ex:"옹이가 많고 굽어 목재로 못 쓰는 큰 나무는 베이지 않아 오래 살아남는다"},
+  {kr:"호접지몽",en:"The Butterfly Dream",def:"나비가 된 꿈을 꾸고 깨어나, 나비 꿈을 꾼 것인지 나비가 자신이 된 꿈을 꾸는지 알 수 없다는 이야기",ex:"이를 일러 물화(物化)라 한다 — 만물이 서로 변화하며 경계가 없다"},
+  {kr:"조삼모사",en:"Three in the Morning, Four in the Evening",def:"본질은 같으나 관점에 따라 다르게 느껴짐을 풍자",ex:"아침 3개·저녁 4개엔 화내고 아침 4개·저녁 3개엔 기뻐한 원숭이들"},
+  {kr:"좌망",en:"Sitting and Forgetting",def:"앉아서 몸과 지각, 앎까지 모두 잊고 큰 도와 하나가 되는 수양법",ex:"사지와 몸을 버리고 총명을 물리쳐 형체를 떠나고 앎을 버려 대통(大通)과 하나가 되는 것"},
+  {kr:"심재",en:"Fasting of the Mind",def:"마음을 비워 욕심과 잡념을 제거하는 정신적 재계",ex:"귀로 듣지 말고 마음으로 들으며, 마음으로 듣지 말고 기(氣)로 들어라"},
+];
+function renderConcept(){
+  document.getElementById('view-concept').innerHTML = CONCEPTS.map(c=>`
+    <div class="concept-card">
+      <h3>${c.kr} <span class="en">${c.en}</span></h3>
+      <p><b>설명</b> — ${c.def}</p>
+      <p><b>예시</b> — ${c.ex}</p>
+    </div>`).join('');
+}
+
+function showTab(name){
+  ['day','toc','concept','sync'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active', t===name);
+    document.getElementById('view-'+t).style.display = (t===name)?'block':'none';
+  });
+}
+
+const SYNC_API = 'https://zhuangzi365-api.yjjn2005.workers.dev/sync/';
+function getPin(){
+  const v = document.getElementById('pinInput').value.trim();
+  return v;
+}
+function setSyncMsg(text, isErr){
+  const el = document.getElementById('syncMsg');
+  el.textContent = text;
+  el.style.color = isErr ? '#b23b3b' : 'var(--muted)';
+}
+async function syncSave(){
+  const pin = getPin();
+  if(!/^[0-9]{4,8}$/.test(pin)){ setSyncMsg('PIN은 4~8자리 숫자로 입력해주세요.', true); return; }
+  setSyncMsg('저장 중...');
+  try{
+    const res = await fetch(SYNC_API+pin, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({day: curDay})
+    });
+    const data = await res.json();
+    if(data.found){
+      localStorage.setItem('zz365_pin', pin);
+      setSyncMsg(`${curDay}일차로 저장 완료 (PIN ${pin}) — 다른 기기에서 같은 PIN으로 불러오세요.`);
+    } else { setSyncMsg('저장 실패: ' + (data.error||'알 수 없는 오류'), true); }
+  }catch(e){ setSyncMsg('네트워크 오류로 저장하지 못했습니다.', true); }
+}
+async function syncLoad(){
+  const pin = getPin();
+  if(!/^[0-9]{4,8}$/.test(pin)){ setSyncMsg('PIN은 4~8자리 숫자로 입력해주세요.', true); return; }
+  setSyncMsg('불러오는 중...');
+  try{
+    const res = await fetch(SYNC_API+pin);
+    const data = await res.json();
+    if(data.found){
+      curDay = data.day;
+      localStorage.setItem('zz365_pin', pin);
+      renderDay();
+      setSyncMsg(`${data.day}일차를 불러왔습니다. (마지막 저장: ${new Date(data.updatedAt).toLocaleString('ko-KR')})`);
+      showTab('day');
+    } else { setSyncMsg('해당 PIN으로 저장된 기록이 없습니다.', true); }
+  }catch(e){ setSyncMsg('네트워크 오류로 불러오지 못했습니다.', true); }
+}
+renderDay(); renderToc(); renderConcept();
+(function initPin(){
+  const saved = localStorage.getItem('zz365_pin');
+  const el = document.getElementById('pinInput');
+  if(saved && el) el.value = saved;
+})();
+</script>
+</body>
+</html>
