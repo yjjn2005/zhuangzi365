@@ -16,9 +16,10 @@
     position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15);}
   header h1{margin:0;font-size:20px;letter-spacing:.5px;}
   header .sub{color:var(--gold);font-size:12px;margin-top:4px;}
-  nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:9;}
-  nav.tabs button{flex:1;padding:11px 4px;border:none;background:none;font-size:13.5px;color:var(--muted);
-    border-bottom:3px solid transparent;font-weight:600;}
+  nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:9;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  nav.tabs button{flex:0 0 auto;min-width:78px;padding:11px 8px;border:none;background:none;font-size:13px;color:var(--muted);
+    border-bottom:3px solid transparent;font-weight:600;white-space:nowrap;}
   nav.tabs button.active{color:var(--navy);border-bottom-color:var(--gold);}
   main{max-width:640px;margin:0 auto;padding:14px 14px 40px;}
 
@@ -77,6 +78,7 @@
   <button id="tab-day" class="active" onclick="showTab('day')">오늘의 장자</button>
   <button id="tab-toc" onclick="showTab('toc')">33편 목차</button>
   <button id="tab-concept" onclick="showTab('concept')">핵심개념10</button>
+  <button id="tab-c99" onclick="showTab('c99')">99개념</button>
   <button id="tab-sync" onclick="showTab('sync')">동기화</button>
 </nav>
 
@@ -84,6 +86,7 @@
   <section id="view-day"></section>
   <section id="view-toc" style="display:none"></section>
   <section id="view-concept" style="display:none"></section>
+  <section id="view-c99" style="display:none"></section>
   <section id="view-sync" style="display:none">
     <div class="card">
       <div class="title" style="font-size:16px;">기기 간 진도 동기화</div>
@@ -215,8 +218,27 @@ function renderConcept(){
     </div>`).join('');
 }
 
+function renderC99(){
+  const groupOf = n => n<=7 ? '내편' : (n<=22 ? '외편' : '잡편');
+  let html = '<div class="prog">33편 × 3개 = 총 99개 핵심개념</div>';
+  let lastGroup = '';
+  CONCEPTS99.forEach(c=>{
+    const g = groupOf(c.no);
+    if(g!==lastGroup){ html += `<div class="grouphead">${g}</div>`; lastGroup=g; }
+    html += `<div class="card" style="padding:12px 14px;">
+      <div class="chapname">제${c.no}편 · ${c.title}</div>
+      ${c.items.map(it=>`
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);">
+          <div style="font-weight:700;color:var(--navy);font-size:14px;">${it.term}</div>
+          <div style="font-size:13px;color:var(--ink);margin-top:2px;">${it.gloss}</div>
+        </div>`).join('')}
+    </div>`;
+  });
+  document.getElementById('view-c99').innerHTML = html;
+}
+
 function showTab(name){
-  ['day','toc','concept','sync'].forEach(t=>{
+  ['day','toc','concept','c99','sync'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active', t===name);
     document.getElementById('view-'+t).style.display = (t===name)?'block':'none';
   });
@@ -264,7 +286,7 @@ async function syncLoad(){
     } else { setSyncMsg('해당 PIN으로 저장된 기록이 없습니다.', true); }
   }catch(e){ setSyncMsg('네트워크 오류로 불러오지 못했습니다.', true); }
 }
-renderDay(); renderToc(); renderConcept();
+renderDay(); renderToc(); renderConcept(); renderC99();
 (function initPin(){
   const saved = localStorage.getItem('zz365_pin');
   const el = document.getElementById('pinInput');
